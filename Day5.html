@@ -1,0 +1,47 @@
+<html>
+    <head>
+        <title>Day5</title>
+        <script>
+            var start = prompt("Hello there! How are you doing today?");
+            if(start.indexOf("fine") !== -1 || start.indexOf("well") !== -1){
+                start = prompt("That's good. What are you doing right now?");
+                if(start.indexOf("homework") !== -1 || start.indexOf("hw") !== -1 || start.indexOf("internet") !== -1){
+                    start = prompt("You should have a social life.");
+                }
+                else{
+                    start = prompt("Interesting... Why don't you try new things?");
+                    if(start.indexOf("lazy") !== -1 || start.indexOf("don't know how") !== -1 || start.indexOf("how") !== -1){
+                        start = prompt("LOL. Excuses, excuses. Well, have a nice day!");
+                    }
+                    else{
+                        start = prompt("LOL okay then. I gotta go. Have a nice day!");
+                    }
+                }
+            }
+            else{
+                start = prompt("LOL. How's life?");
+                if(start.indexOf("boring") !== -1 || start.indexOf("bored") !== -1 || start.indexOf("sucks") !== -1){
+                    start = prompt("You should try finding something you like to do.");
+                    if(start.indexOf("lazy") !== -1 || start.indexOf("don't know how") !== -1 || start.indexOf("how") !== -1){
+                        start = prompt("LOL. Excuses, excuses. Well, have a nice day!");
+                    }
+                    else{
+                        start = prompt("LOL okay. I gotta go. Have a nice day!");
+                    }
+                }
+                else{
+                    start = prompt("Not taking any SAT classes?");
+                    if(start.indexOf("I am") !== -1 || start.indexOf("summer school") !== -1 || start.indexOf("AEF") !== -1){
+                        start = prompt("Nerd. JK That's a good thing. I think. But you should try to find something you like to do.");
+                    }
+                    else{
+                        start = prompt("Tsk tsk. Go sign up for something. Learn more things.");
+                    }
+                }
+            }
+        </script> 
+    </head>
+    <body>
+        <div>Day 5: Javascript</div>
+    </body>
+</html>
