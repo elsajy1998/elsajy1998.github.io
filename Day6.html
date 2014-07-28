@@ -1,0 +1,42 @@
+<html>
+    <head>
+        <title>Day6</title>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script>
+            /*$(function(){
+                
+            })
+            */
+            //team
+            var team = new Array();
+            team[0]="USA";
+            team[1]="Brazil";
+            team[2]="Spain";
+            team[3]="Portugal";
+            team[4]="Germany";
+            var randomTeam = new Array();
+            randomTeam[1]=Math.floor(Math.random()*(5-0)+0);
+            randomTeam[2]=Math.floor(Math.random()*(5-0)+0);
+            //emotion
+            var emotion = new Array("feels","excitement","frustration");
+            var randomEmotion = Math.floor(Math.random()*(3-0)+0);
+            //printed sentence
+            var sentence = new Array();
+            sentence[0] = "Today, I watched a football game with my family.";
+            sentence[1] = "The game was between " + team[randomTeam[1]] + " and " + team[randomTeam[2]] + ".";
+            sentence[2] = "I was rooting for " + team[randomTeam[1]] + " while the rest of my family was rooting for " + team[randomTeam[2]] + ".";
+            sentence[3] = "It was so intense; I couldn't contain my " + emotion[randomEmotion] + ".";
+            console.log(sentence[0]);
+            console.log(sentence[1]);
+            console.log(sentence[2]);
+            console.log(sentence[3]);
+            /* function rand(x){
+                return x[Math.floor(Math.random
+            */
+        </script>
+    </head>
+    <body>
+    </body>
+</html>
+
+

@@ -1,0 +1,238 @@
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <style>
+            @font-face{
+                font-family: flappybird;
+                src: url('04B_19__.TTF');
+            }
+            #Canvas{
+                width: 480px;
+                height: 620px;
+                background-image: url("https://az31353.vo.msecnd.net/pub/ltrujpql");
+                position: relative;
+                font-family: flappybird;
+                overflow: hidden;
+            }
+            #Bird{
+                width: 45px;
+                height: 32px;
+                background-size: cover;
+                background-image: url("../../../images/flappybird.png");
+                position: absolute;
+                top: 50%;
+                left: 40%;
+                z-index: 999;
+            }
+            .Pipe{
+                background-color: greenyellow;
+                width: 80px;
+                position: absolute;
+                left: 100%;
+            }
+            #Score{
+                position: absolute;
+                top: 20%;
+                color: white;
+                text-align: center;
+                width: 100%;
+                font-size: 50px;
+                z-index: 999;
+                text-shadow: 
+                    -2px 0 black,
+                    0 2px black,
+                    2px 0 black,
+                    0 -2px black;
+            }
+            #ScoreScreen{
+                position: relative;
+                left: -50%;
+                background-color: palegoldenrod;
+                border: 2px solid black;
+                border-radius: 5px;
+                padding: 15px;
+                z-index: 999;
+                font-size: 20px;
+                color: coral;
+                text-align: center;
+                display: none;
+            }
+            
+        </style>
+    </head>
+    <body>
+        <div id ="Canvas">
+            <div id ="Bird">
+            </div>
+            <div id="Score">
+                0
+            </div>
+            <div style="position: absolute; top: 40%; left: 50%;">
+                <div id="ScoreScreen">
+                    Score
+                    <div id="ScoreNumber">
+
+                    </div>
+                    Best
+                    <div id="BestNumber">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script>
+            $(function(){
+                var gameLoopSpeed = 100;
+                var pattern = 0;
+                var playerLost = false;
+                function gameLoop(){
+                    fall();
+                    pattern++;
+                    if(pattern % 15 == 0){
+                        addPipe();
+                    }
+                    legitCheckCollisions();
+                    score();
+                    canvasCollision();
+                }
+                var gameLoopID = window.setInterval(gameLoop, gameLoopSpeed);
+                var verticalVelocity = 0;
+                var gravity = 1;
+                var birdJumping = false;
+                function fall(){
+                    if(!birdJumping){
+                        verticalVelocity += gravity;
+                        $('#Bird').stop().animate({'top': '+='+verticalVelocity+'%'}, gameLoopSpeed, "linear");
+                    }
+                }
+                function jump(){
+                    if(playerLost){
+                        return;
+                        //exit the function immediately (it returns nothing
+                    }
+                    //console.log("jump");
+                    birdJumping = true;
+                    verticalVelocity = 0;
+                    $('#Bird').stop().animate({'top': '-='+10+'%'}, gameLoopSpeed, "linear", function(){
+                        birdJumping = false;
+                        fall();
+                    });
+                }
+                /* animations want to finish themselves
+                 */
+                $('#Canvas').click(function(){
+                    jump();
+                });
+                
+                function addPipe(){
+                    var gap = 20;
+                    var minHeight = 20;
+                    var diffHeight = 40;
+                    var pipeSpeed = 3500;
+                    var randomHeight = Math.floor(Math.random()*diffHeight+minHeight);
+                    var bottomHeight = 100 - (gap + randomHeight);
+                    $('<div/>').css("height", randomHeight+'%')
+                            .addClass('Pipe').appendTo($('#Canvas'))
+                            .animate({'left': '-50%'}, pipeSpeed, "linear", function(){
+                                $(this).remove();
+                    });
+                    $('<div/>').css({
+                        'height': bottomHeight+'%',
+                        'bottom': '0%'
+                    })
+                            .addClass('Pipe').appendTo($('#Canvas'))
+                            .animate({'left': '-50%'}, pipeSpeed, "linear", function(){
+                                $(this).remove();
+                    });
+                }
+                function checkCollisions(el1,el2){
+                    var el1Top = el1.position().top;
+                    var el1Left = el1.position().left;
+                    var el1Width = el1.width();
+                    var el1Height = el1.height();
+                    
+                    var el2Top = el2.position().top;
+                    var el2Left = el2.position().left;
+                    var el2Width = el2.width();
+                    var el2Height = el2.height();
+                    
+                    /* if(
+                        (
+                            (el1Left + el1Width >= el2Left && el1Left + el1Width <= el2Left + el2Width) && 
+                            (
+                                (el1Top <= el2Top + el2Height && el1Top >= el2Top) || 
+                                (el1Top + el1Height >= el2Top && el1Top + el1Height <= el2Top + el2Height)
+                            )
+                        ) 
+                        ||
+                        (
+                            (el1Left <= el2Left + el2Width && el1Left >= el2Left) && 
+                            (
+                                (el1Top <= el2Top + el2Height && el1Top >= el2Top) || 
+                                (el1Top + el1Height >= el2Top && el1Top <= el2Top + el2Height)
+                            )
+                        )
+                    )
+                    */
+                    return !(el1Left+el1Width < el2Left 
+                           || el1Top+el1Height < el2Top 
+                           || el1Left > el2Left+el2Width 
+                           || el1Top > el2Top+el2Height)
+                }
+                function legitCheckCollisions(){
+                    $( ".Pipe" ).each(function() {
+                        if($(this).position().left <= 270){
+                            if(checkCollisions($('#Bird'), $(this))){
+                                //alert("!");
+                                die();
+                            }
+                        }
+                    });
+                }
+                var lastClosestPipe = 0;
+                var theRealScore = 0; 
+                function score(){
+                    var smallestDist = 9999;
+                    var closestPipe = 0;
+                    // establish, before we see the list of numbers, the smallest distance so that smallestDist won't be overrided (in .each)
+                    $( ".Pipe" ).each(function() {
+                        var currentDist = $('#Bird').position().left - ($(this).position().left + $(this).width());
+                        if(currentDist > 0 && currentDist < smallestDist){
+                            smallestDist = currentDist;
+                            closestPipe = $(this);
+                        }
+                    });
+                    // closestPipe !== is checked first. if its false, the entire statement is false.
+                    // therefore, if closestPipe is 0, then the computer wont continue to check the statement
+                    // and assume the statement is false.
+                    if(closestPipe !== 0 && !closestPipe.is(lastClosestPipe)){
+                        theRealScore++;
+                        $( "#Score" ).text(theRealScore);
+                    }
+                    lastClosestPipe = closestPipe;
+                }
+                function canvasCollision(){
+                    if(!checkCollisions($('#Bird'), $('#Canvas'))){
+                        die();
+                    }
+                }
+                function die(){
+                    clearInterval(gameLoopID);
+                    $('#Bird').stop().animate({'top': '95%'}, 600);
+                    playerLost = true;
+                    $('.Pipe').stop();
+                    $('#ScoreNumber').text(theRealScore);
+                    $('#ScoreScreen').slideDown();
+                    $('#Score').slideUp();
+                    var lastHighScore = localStorage.getItem("highScore");
+                    if(lastHighScore == null || lastHighScore < theRealScore){
+                        localStorage.setItem('highScore', theRealScore);
+                    }
+                    $('#BestNumber').text(localStorage.getItem('highScore'));
+                }
+                //pipe < bird && distance from bird to pipe is smallest
+            });
+        </script>
+    </body>
+</html>
